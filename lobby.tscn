@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=3 uid="uid://cht684f8bcsf"]
+
+[ext_resource type="Script" uid="uid://cvdqtevjr1f04" path="res://lobby.gd" id="1_ll2xe"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = ExtResource("1_ll2xe")
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+offset_right = 1153.0
+offset_bottom = 650.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Panel"]
+layout_mode = 0
+offset_left = 421.0
+offset_top = 168.0
+offset_right = 701.0
+offset_bottom = 450.0
+scale = Vector2(1.2, 1.2)
+
+[node name="LobbyIDLabel" type="Label" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayerList" type="ItemList" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+auto_width = true
+auto_height = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ReadyButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "ReadyButton"
+
+[node name="StartGameButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "StartGameButton"
+
+[node name="ChatLog" type="RichTextLabel" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ChatInput" type="LineEdit" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "ChatInput"
+clear_button_enabled = true
+
+[node name="SendButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "SendButton"

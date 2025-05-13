@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqfy112fdj6ih"]
+
+[ext_resource type="Script" uid="uid://7n85jl74ycsj" path="res://MainMenu.gd" id="1_lti8b"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lti8b")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+offset_right = 1149.0
+offset_bottom = 644.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Panel"]
+layout_mode = 0
+offset_left = 426.0
+offset_top = 157.0
+offset_right = 706.0
+offset_bottom = 437.0
+scale = Vector2(1.2, 1.2)
+
+[node name="UsernameInput" type="LineEdit" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "UsernameInput"
+
+[node name="CreateLobbyButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "CreateLobbyButton"
+
+[node name="LobbyCodeInput" type="LineEdit" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "LobbyCodeInput"
+
+[node name="JoinLobbyButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "JoinLobbyButton"
+
+[connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/CreateLobbyButton" to="." method="_on_create_lobby_button_pressed"]
