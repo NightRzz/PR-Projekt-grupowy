@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=4 uid="uid://dkbnpk82hjud"]
+[gd_scene load_steps=9 format=4 uid="uid://dkbnpk82hjud"]
 
 [ext_resource type="Texture2D" uid="uid://bcklp16tiea42" path="res://sprites/Cave-Grass Tileset/tileset_packed.png" id="1_e2o6t"]
 [ext_resource type="Script" uid="uid://brkyufu6y1rhy" path="res://game manager.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://m685vvuxchwu" path="res://sprites/Cave-Grass Tileset/background 2.png" id="2_fc0e3"]
 [ext_resource type="Texture2D" uid="uid://bh5eowxxg0cjn" path="res://sprites/Cave-Grass Tileset/tileset_readable.png" id="2_feb5d"]
+[ext_resource type="Texture2D" uid="uid://2fq0gwyuv8wr" path="res://sprites/Cave-Grass Tileset/clouds.png" id="5_7jktm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 texture = ExtResource("1_e2o6t")
@@ -513,12 +514,26 @@ position = Vector2(-2, 2)
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 texture_repeat = 2
-motion_scale = Vector2(1.5, 1.5)
+motion_scale = Vector2(0.3, 0.3)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+modulate = Color(0.886871, 0.873979, 0.988638, 1)
 texture_repeat = 2
-position = Vector2(637.5, 360)
-scale = Vector2(1.99219, 1.97778)
+position = Vector2(657, 377)
+scale = Vector2(1.11433, 1.1707)
 texture = ExtResource("2_fc0e3")
 region_enabled = true
-region_rect = Rect2(-161.568, -93.1511, 1031.66, 519.852)
+region_rect = Rect2(-528.641, -246.206, 1673.95, 828.205)
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+texture_repeat = 2
+motion_scale = Vector2(0.9, 0.9)
+
+[node name="Sprite2D2" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer2"]
+modulate = Color(0, 0.854902, 1, 0.270588)
+texture_repeat = 2
+position = Vector2(636, 314)
+scale = Vector2(1.77953, 1.49734)
+texture = ExtResource("5_7jktm")
+region_enabled = true
+region_rect = Rect2(-376.936, -212.705, 1369.95, 664.513)

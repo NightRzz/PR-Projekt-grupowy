@@ -1,4 +1,4 @@
-[gd_scene load_steps=62 format=3 uid="uid://c72nmfhy2q5p3"]
+[gd_scene load_steps=60 format=3 uid="uid://c72nmfhy2q5p3"]
 
 [ext_resource type="Script" uid="uid://dk07vxjvqlu5y" path="res://player.gd" id="1_4flbx"]
 [ext_resource type="Texture2D" uid="uid://da00hlhx71yop" path="res://sprites/1/Wanderer Magican/Idle.png" id="2_hqtel"]
@@ -36,14 +36,6 @@ region = Rect2(768, 0, 128, 128)
 [sub_resource type="AtlasTexture" id="AtlasTexture_bwjto"]
 atlas = ExtResource("2_hqtel")
 region = Rect2(896, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_606se"]
-atlas = ExtResource("3_sweqy")
-region = Rect2(0, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u1c27"]
-atlas = ExtResource("3_sweqy")
-region = Rect2(128, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_op7ga"]
 atlas = ExtResource("3_sweqy")
@@ -133,12 +125,6 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_606se")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u1c27")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_op7ga")
 }, {
@@ -295,7 +281,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="Animation_hl5qd"]
 resource_name = "jump_l"
-length = 0.75
+length = 0.55
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -328,15 +314,15 @@ tracks/2/path = NodePath(".:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5, 6, 7]
+"values": [0, 1, 2, 3, 4, 5]
 }
 
 [sub_resource type="Animation" id="Animation_pbfsw"]
 resource_name = "jump_r"
-length = 0.75
+length = 0.55
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -357,10 +343,10 @@ tracks/1/path = NodePath(".:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5, 6, 7]
+"values": [0, 1, 2, 3, 4, 5]
 }
 
 [sub_resource type="Animation" id="Animation_tkwlq"]
@@ -570,7 +556,7 @@ drag_bottom_margin = 0.02
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pylmc")
-animation = &"idle"
+animation = &"jump"
 frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

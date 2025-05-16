@@ -66,7 +66,8 @@ class GameServer:
                 'player_input': self.handle_player_input,
                 'attack': self.handle_attack,
                 'pause': self.handle_pause,
-                'player_ready': self.handle_player_ready
+                'player_ready': self.handle_player_ready,
+                'character_select': self.handle_character_select
             }.get(message['type'], self.handle_unknown)
 
             with self.lock:
@@ -94,8 +95,31 @@ class GameServer:
                 'id': other_id,
                 'position': self.game_states[lobby_id]['players'][other_id]['position'],
                 'is_local': (player_id == other_id),
-                'username': self.players[other_id]['username']
+                'username': self.players[other_id]['username'],
+                'character': self.players[other_id].get('character', 'warrior')
             }, lobby.players[player_id]['addr'])
+
+    def handle_character_select(self, message, addr):
+        player_id = str(addr)
+        character = message.get('character', 'warrior')
+        if player_id in self.players:
+            self.players[player_id]['character'] = character
+            # Find the lobby
+            lobby_id = self.waiting_players.get(player_id)
+            if not lobby_id:
+                return
+            lobby = self.lobbies.get(lobby_id)
+            if not lobby:
+                return
+            # Broadcast to all players in the lobby
+            for other_id, other_player in lobby.players.items():
+                self._send_json({
+                    'type': 'character_changed',
+                    'id': player_id,
+                    'character': character
+                }, other_player['addr'])
+
+
 
     # Lobby management
     def handle_create_lobby(self, message, addr):
