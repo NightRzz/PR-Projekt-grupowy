@@ -93,7 +93,8 @@ class GameServer:
                 'type': 'spawn_player',
                 'id': other_id,
                 'position': self.game_states[lobby_id]['players'][other_id]['position'],
-                'is_local': (player_id == other_id)
+                'is_local': (player_id == other_id),
+                'username': self.players[other_id]['username']
             }, lobby.players[player_id]['addr'])
 
     # Lobby management

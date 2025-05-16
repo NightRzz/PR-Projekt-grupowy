@@ -28,7 +28,7 @@ func _handle_server_message(data):
 		"game_update":
 			_update_game_state(data.state)
 		"spawn_player":
-			_spawn_player(data.id, data.position, data.is_local)
+			_spawn_player(data.id, data.position, data.is_local, data.username)
 		"player_position":
 			_update_player_position(data.id, data.position, data.velocity, data.anim_state, data.direction)
 
@@ -36,21 +36,19 @@ func _update_game_state(state):
 	# Update general game state here
 	pass
 
-func _spawn_player(id: String, position: Array, is_local: bool):
-	print("Spawning 1player: ", id, " at ", position)
+func _spawn_player(id: String, position: Array, is_local: bool, nickname: String):
 	if players.has(id):
 		return
-	print("Spawning player: ", id, " at ", position)
 	var player = player_scene.instantiate()
 	player.position = Vector2(position[0], position[1])
 	player.player_id = id  # Now string
 	player.is_local_player = is_local
-	
+	if !is_local:
+		player.get_node("Nickname").text = nickname
 	if is_local:
 		local_player_id = id
 	
 	$Players.add_child(player)
-	print("Spawning 2player: ", id, " at ", position)
 	players[id] = player
 
 func _update_player_position(id, position, velocity, anim_state, direction):
