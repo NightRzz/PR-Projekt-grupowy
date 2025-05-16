@@ -1,0 +1,26 @@
+
+
+SIZES:
+	+ Terrain blocks - 16x16 
+	+ Characters - 32x32 or 16x16 
+	+ Others - Varying but rather obvious. 
+	  Divisble by 16x16.
+
+
+ANIMATION:
+	+ Mobs with 3 frames uses ping-pong animation.
+	+ There is no duplicate frame for any animation. 
+	  Please 
+
+
+TERRAIN:
+	I encourage the use shaders and lighting to complement the base elements.
+	Water is made with a custom shader (as seen in the banner) for such reason.
+
+
+PS:
+  Don't hesitate to reach out or ask questions :)
+  Email: amonsteahotpot@gmail.com
+  Itch.io: https://alwaysrice.itch.io/mini-legend
+ 
+

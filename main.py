@@ -26,8 +26,9 @@ class GameLobby:
         self.created_at = time.time()
 
 
+
 class GameServer:
-    def __init__(self, host='127.0.0.1', port=9999):
+    def __init__(self, host='192.168.0.164', port=9999):
         self.server_address = (host, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(self.server_address)
@@ -64,7 +65,8 @@ class GameServer:
                 'start_game': self.handle_start_game,
                 'player_input': self.handle_player_input,
                 'attack': self.handle_attack,
-                'pause': self.handle_pause
+                'pause': self.handle_pause,
+                'player_ready': self.handle_player_ready
             }.get(message['type'], self.handle_unknown)
 
             with self.lock:
@@ -74,6 +76,25 @@ class GameServer:
             print(f"Invalid JSON from {addr}")
         except Exception as e:
             print(f"Processing error: {e}")
+
+    def handle_player_ready(self, message, addr):
+        player_id = str(addr)
+        lobby_id = self.waiting_players.get(player_id)
+        if not lobby_id:
+            return
+        lobby = self.lobbies.get(lobby_id)
+        if not lobby:
+            return
+        # Mark this player as ready for spawning
+        lobby.ready_players.add(player_id)
+        # Send spawn_player messages for all players, to this player only
+        for other_id in lobby.players.keys():
+            self._send_json({
+                'type': 'spawn_player',
+                'id': other_id,
+                'position': self.game_states[lobby_id]['players'][other_id]['position'],
+                'is_local': (player_id == other_id)
+            }, lobby.players[player_id]['addr'])
 
     # Lobby management
     def handle_create_lobby(self, message, addr):
@@ -182,13 +203,61 @@ class GameServer:
             self.start_game_countdown(lobby)
 
     # Game management
+
+    def initialize_game(self, lobby):
+        lobby.state = LobbyState.IN_GAME
+        self.game_states[lobby.id] = {
+            'players': {},
+            'level': 1
+        }
+
+        spawn_positions = [[271, 385], [716, 321]]
+        player_index = 0
+
+        # Assign spawn positions to each player by string ID
+        for player_id, player in lobby.players.items():
+            self.game_states[lobby.id]['players'][player_id] = {
+                'position': spawn_positions[player_index],
+                'velocity': [0, 0]
+            }
+            player_index += 1
+
+        # Send spawn message to each player, using string IDs
+
+
+
+        threading.Thread(target=self.game_loop, args=(lobby,), daemon=True).start()
+
+    def game_loop(self, lobby):
+        while self.running and lobby.id in self.game_states:
+            with self.lock:
+                # Broadcast updated positions
+                for player_id, player_data in self.game_states[lobby.id]['players'].items():
+                    for other_player in lobby.players.values():
+                        self._send_json({
+                            'type': 'player_position',
+                            'id': player_id,
+                            'position': player_data['position'],
+                            'velocity': player_data['velocity']
+                        }, other_player['addr'])
+
+            # Loop at 20 updates per second
+            time.sleep(0.01)
+
     def handle_player_input(self, message, addr):
         player_id = str(addr)
         if player_id not in self.players:
             return
 
-        # Update game state logic here
-        pass
+        lobby_id = self.waiting_players.get(player_id)
+        if not lobby_id or lobby_id not in self.game_states:
+            return
+
+        # Update player position and velocity
+        if player_id in self.game_states[lobby_id]['players']:
+            self.game_states[lobby_id]['players'][player_id]['position'] = message.get('position', [0, 0])
+            self.game_states[lobby_id]['players'][player_id]['velocity'] = message.get('velocity', [0, 0])
+
 
     def handle_attack(self, message, addr):
         # Attack validation logic
@@ -239,9 +308,20 @@ class GameServer:
         for player in lobby.players.values():
             self._send_json(data, player['addr'])
 
+    def handle_start_game(self, message, addr):
+        player_id = str(addr)
+        lobby_id = self.waiting_players.get(player_id)
+        if not lobby_id: return
+
+        lobby = self.lobbies[lobby_id]
+        if player_id == lobby.host and len(lobby.players) == 2:
+            if all(p['ready'] for p in lobby.players.values()):
+                lobby.state = LobbyState.COUNTDOWN
+                self.start_game_countdown(lobby)
+
     def start_game_countdown(self, lobby):
         def countdown_task():
-            for i in range(10, 0, -1):
+            for i in range(2, 0, -1):
                 with self.lock:
                     if lobby.state != LobbyState.COUNTDOWN:
                         return
@@ -250,32 +330,17 @@ class GameServer:
                 time.sleep(1)
 
             with self.lock:
+                for player in lobby.players.values():
+                    self._send_json({"type": "game"}, player['addr'])
                 self.initialize_game(lobby)
 
         threading.Thread(target=countdown_task).start()
 
-    def initialize_game(self, lobby):
-        # Transition to game state
-        lobby.state = LobbyState.IN_GAME
-        del self.lobbies[lobby.id]
 
-        # Initialize game state
-        self.game_states[lobby.id] = {
-            'players': {},
-            'enemies': [],
-            'projectiles': [],
-            'level': 1
-        }
 
-        # Start game loop
-        threading.Thread(target=self.game_loop, args=(lobby,), daemon=True).start()
 
-    def game_loop(self, lobby):
-        while self.running:
-            with self.lock:
-                # Update game state
-                self.broadcast_game_state(lobby)
-            time.sleep(0.016)
+
+
 
     def broadcast_game_state(self, lobby):
         game_state = self.game_states.get(lobby.id, {})

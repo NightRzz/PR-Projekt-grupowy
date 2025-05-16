@@ -32,7 +32,9 @@ func _handle_server_message(data: Dictionary):
 			Global.is_host = data.host
 			Global.players = data.players
 			_update_lobby_ui()
-		
+		"game":
+			get_tree().change_scene_to_file("res://game.tscn")
+			
 		"lobby_update":
 			Global.players = data.players
 			_update_lobby_ui()
