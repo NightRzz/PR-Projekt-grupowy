@@ -1,17 +1,9 @@
-[gd_scene load_steps=10 format=4 uid="uid://dkbnpk82hjud"]
+[gd_scene load_steps=8 format=4 uid="uid://dkbnpk82hjud"]
 
 [ext_resource type="Texture2D" uid="uid://bcklp16tiea42" path="res://sprites/Cave-Grass Tileset/tileset_packed.png" id="1_e2o6t"]
 [ext_resource type="Script" uid="uid://brkyufu6y1rhy" path="res://game manager.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://m685vvuxchwu" path="res://sprites/Cave-Grass Tileset/background 2.png" id="2_fc0e3"]
 [ext_resource type="Texture2D" uid="uid://bh5eowxxg0cjn" path="res://sprites/Cave-Grass Tileset/tileset_readable.png" id="2_feb5d"]
-
-[sub_resource type="Animation" id="Animation_fc0e3"]
-resource_name = "new_animation"
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_7jktm"]
-_data = {
-&"new_animation": SubResource("Animation_fc0e3")
-}
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 texture = ExtResource("1_e2o6t")
@@ -505,16 +497,6 @@ sources/2 = SubResource("TileSetAtlasSource_7jktm")
 [node name="Game" type="Node2D"]
 script = ExtResource("1_feb5d")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(642.5, 367)
-scale = Vector2(1.99531, 1.95556)
-texture = ExtResource("2_fc0e3")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
-libraries = {
-&"": SubResource("AnimationLibrary_7jktm")
-}
-
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_feb5d")
 format = 2
@@ -526,3 +508,17 @@ tile_set = SubResource("TileSet_feb5d")
 
 [node name="Players" type="Node2D" parent="."]
 position = Vector2(-2, 2)
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+texture_repeat = 2
+motion_scale = Vector2(1.5, 1.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+texture_repeat = 2
+position = Vector2(637.5, 360)
+scale = Vector2(1.99219, 1.97778)
+texture = ExtResource("2_fc0e3")
+region_enabled = true
+region_rect = Rect2(-161.568, -93.1511, 1031.66, 519.852)

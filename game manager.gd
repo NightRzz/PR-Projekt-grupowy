@@ -30,7 +30,7 @@ func _handle_server_message(data):
 		"spawn_player":
 			_spawn_player(data.id, data.position, data.is_local)
 		"player_position":
-			_update_player_position(data.id, data.position, data.velocity)
+			_update_player_position(data.id, data.position, data.velocity, data.anim_state, data.direction)
 
 func _update_game_state(state):
 	# Update general game state here
@@ -53,9 +53,10 @@ func _spawn_player(id: String, position: Array, is_local: bool):
 	print("Spawning 2player: ", id, " at ", position)
 	players[id] = player
 
-func _update_player_position(id, position, velocity):
+func _update_player_position(id, position, velocity, anim_state, direction):
 	if players.has(id) and id != local_player_id:
 		players[id].update_remote_transform(
 			position[0], position[1], 
-			velocity[0], velocity[1]
+			velocity[0], velocity[1],
+			anim_state, direction
 		)

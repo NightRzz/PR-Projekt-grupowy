@@ -6,7 +6,10 @@ var is_local_player := false
 const SPEED = 300
 const JUMP_VELOCITY = -400.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-
+@onready var anim = get_node("AnimationTree")
+var anim_state = ""
+var direction = ""
+var last_dir = ""
 func _ready():
 	$Camera2D.enabled = is_local_player
 
@@ -15,7 +18,9 @@ func _process(delta):
 		var data = {
 			"type": "player_input",
 			"position": [position.x, position.y],
-			"velocity": [velocity.x, velocity.y]
+			"velocity": [velocity.x, velocity.y],
+			"anim_state": anim_state,
+			"direction": direction
 		}
 		Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
 
@@ -30,14 +35,36 @@ func _physics_process(delta):
 			velocity.y += gravity * delta
 		else:
 			velocity.y = 0
+			
+		if velocity.x < 0:
+			anim.set("parameters/run/BlendSpace2D/blend_position", Vector2(-1, 0))
+			anim.set("parameters/jump/BlendSpace2D/blend_position", Vector2(-1, 0))
+			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(-1, 0))
+		elif velocity.x > 0:
+			anim.set("parameters/run/BlendSpace2D/blend_position", Vector2(1, 0))
+			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(1, 0))
+			anim.set("parameters/jump/BlendSpace2D/blend_position", Vector2(1, 0))
 
 		# Jump (use "jump" action, not "ui_up")
 		if Input.is_action_just_pressed("ui_up") and ($RayCast2D.is_colliding() or $RayCast2D2.is_colliding()):
 			velocity.y = JUMP_VELOCITY
-
+			anim.get("parameters/playback").travel("jump")
+			anim_state = "jump"
+		elif abs(velocity.x) > 10:
+			anim.get("parameters/playback").travel("run")
+			anim_state = "run"
+		else:
+			anim.get("parameters/playback").travel("idle")
+			anim_state = "idle"
+		last_dir = direction
+		direction = "right" if velocity.x > 0 else ("left" if velocity.x < 0 else last_dir)
+			
 		move_and_slide()
 
-func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0):
+func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0, anim_state: String = "idle", direction: String = "right"):
 	if !is_local_player:
 		position = Vector2(pos_x, pos_y)
 		velocity = Vector2(vel_x, vel_y)
+		anim.get("parameters/playback").travel(anim_state)
+		var blend = Vector2(1, 0) if direction == "right" else Vector2(-1, 0)
+		anim.set("parameters/%s/BlendSpace2D/blend_position" % anim_state, blend)

@@ -218,7 +218,9 @@ class GameServer:
         for player_id, player in lobby.players.items():
             self.game_states[lobby.id]['players'][player_id] = {
                 'position': spawn_positions[player_index],
-                'velocity': [0, 0]
+                'velocity': [0, 0],
+                'anim_state': 'idle',
+                'direction': 'right'
             }
             player_index += 1
 
@@ -238,7 +240,9 @@ class GameServer:
                             'type': 'player_position',
                             'id': player_id,
                             'position': player_data['position'],
-                            'velocity': player_data['velocity']
+                            'velocity': player_data['velocity'],
+                            'anim_state': player_data['anim_state'],
+                            'direction': player_data['direction']
                         }, other_player['addr'])
 
             # Loop at 20 updates per second
@@ -257,6 +261,9 @@ class GameServer:
         if player_id in self.game_states[lobby_id]['players']:
             self.game_states[lobby_id]['players'][player_id]['position'] = message.get('position', [0, 0])
             self.game_states[lobby_id]['players'][player_id]['velocity'] = message.get('velocity', [0, 0])
+            self.game_states[lobby_id]['players'][player_id]['anim_state'] = message.get('anim_state', 'idle')
+            self.game_states[lobby_id]['players'][player_id]['direction'] = message.get('direction', 'right')
+
 
 
     def handle_attack(self, message, addr):
