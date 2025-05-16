@@ -17,11 +17,19 @@ hframes = 7
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(1.5, 1.5)
+limit_left = 0
+limit_top = 20
+limit_right = 1280
+limit_bottom = 720
 limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
+drag_left_margin = 0.02
+drag_top_margin = 0.02
+drag_right_margin = 0.02
+drag_bottom_margin = 0.02
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 physics_interpolation_mode = 1

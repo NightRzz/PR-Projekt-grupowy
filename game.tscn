@@ -506,10 +506,9 @@ sources/2 = SubResource("TileSetAtlasSource_7jktm")
 script = ExtResource("1_feb5d")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(640.5, 357.182)
-scale = Vector2(7.95625, 1.98232)
+position = Vector2(642.5, 367)
+scale = Vector2(1.99531, 1.95556)
 texture = ExtResource("2_fc0e3")
-hframes = 4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
 libraries = {
