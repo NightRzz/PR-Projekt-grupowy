@@ -4,7 +4,7 @@ extends CanvasLayer
 func _ready():
 	$Panel.visible = true
 	$Panel/VBoxContainer/ChatInput.max_length = 100
-	
+	$Panel/VBoxContainer/ExitButton.pressed.connect(_on_exit_lobby)
 	$Panel/VBoxContainer/SendButton.pressed.connect(_send_chat_message)
 	$Panel/VBoxContainer/ChatInput.text_submitted.connect(func(_t): _send_chat_message())
 	$Panel/VBoxContainer/HBoxContainer/VBoxContainer/ReadyButton.pressed.connect(_toggle_ready)
@@ -58,7 +58,11 @@ func _update_lobby_ui():
 		$Panel/VBoxContainer/HBoxContainer/PlayerList.add_item(text)
 	
 	$Panel/VBoxContainer/HBoxContainer/VBoxContainer/StartGameButton.visible = Global.is_host
-
+func _on_exit_lobby():
+	var message = {"type": "exit_lobby"}
+	Global.udp.put_packet(JSON.stringify(message).to_utf8_buffer())
+	get_tree().change_scene_to_file("res://menu.tscn")
+	
 func _add_chat_message(player: String, text: String):
 	var time = Time.get_time_string_from_system()
 	$Panel/VBoxContainer/ChatLog.append_text("[%s] %s: %s\n" % [time, player, text])

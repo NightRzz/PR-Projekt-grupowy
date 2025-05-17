@@ -27,7 +27,7 @@ func _process(delta):
 func _physics_process(delta):
 	if is_local_player:
 		# Only get horizontal input
-		var horizontal = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+		var horizontal = Input.get_action_strength("right") - Input.get_action_strength("left")
 		velocity.x = horizontal * SPEED
 
 		# Apply gravity
@@ -45,8 +45,7 @@ func _physics_process(delta):
 			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(1, 0))
 			anim.set("parameters/jump/BlendSpace2D/blend_position", Vector2(1, 0))
 
-		# Jump (use "jump" action, not "ui_up")
-		if Input.is_action_just_pressed("ui_up") and ($RayCast2D.is_colliding() or $RayCast2D2.is_colliding()):
+		if Input.is_action_just_pressed("up") and ($RayCast2D.is_colliding() or $RayCast2D2.is_colliding()):
 			velocity.y = JUMP_VELOCITY
 			anim.get("parameters/playback").travel("jump")
 			anim_state = "jump"

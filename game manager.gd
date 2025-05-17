@@ -11,10 +11,10 @@ var selected_character = "warrior"
 
 func _ready():
 	# Setup timer to receive UDP packets
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.1).timeout
 	var timer = Timer.new()
 	add_child(timer)
-	timer.wait_time = 0.009  # 100 times per second
+	timer.wait_time = 0.006  # 100 times per second
 	timer.timeout.connect(_process_packets)
 	timer.start()
 	
@@ -53,7 +53,6 @@ func _handle_server_message(data):
 func _update_player_character(id: String, character: String):
 	if not players.has(id):
 		return
-	# Remove the old player node
 	var old_player = players[id]
 	var pos = old_player.position
 	1
