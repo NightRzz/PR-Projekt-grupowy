@@ -781,4 +781,5 @@ target_position = Vector2(0, 30)
 
 [node name="Eye" type="RayCast2D" parent="."]
 position = Vector2(0, 6)
-target_position = Vector2(155, 9)
+scale = Vector2(1.0523, 8.20296)
+target_position = Vector2(155.346, 3.657)

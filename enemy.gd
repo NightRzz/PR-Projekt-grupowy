@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-@export var patrol_distance := 150.0
-@export var patrol_speed := 80.0
-@export var chase_speed := 180.0
+@export var patrol_distance := 120.0
+@export var patrol_speed := 50.0
+@export var chase_speed := 150.0
 @export var is_owner := false
 var left_bound : float
 var right_bound : float
@@ -11,18 +11,22 @@ var state = State.PATROL
 var player : Node2D = null
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var anim = get_node("AnimationTree")
-@onready var eye = $RayCast2D
+@onready var eye = $Eye
+@onready var sword = $AnimatedSprite2D/Swing/SwingCol
 var anim_state = "walk"
 var direction = ""
 var last_dir = ""
 var current_state = State.PATROL
+var initial_position: Vector2
 
 enum State {
 	PATROL,
-	CHASE
+	CHASE,
+	RETURN
 }
 
 func _ready():
+	initial_position = position 
 	left_bound = position.x - patrol_distance
 	right_bound = position.x + patrol_distance
 	patrol_direction = 1
@@ -48,19 +52,23 @@ func _physics_process(delta):
 			anim.set("parameters/attack/BlendSpace2D/blend_position", Vector2(1, 0))
 		match state:
 			State.PATROL:
+				anim.get("parameters/playback").travel("walk")
+				anim_state = "walk"
 				_patrol(delta)
-				if _see_player():
+				if _see_player(eye):
 					state = State.CHASE
 					anim.get("parameters/playback").travel("run")
 					anim_state = "run"
 			State.CHASE:
-				if _see_player():
+				if _see_player(eye):
 					_chase_player(delta)
 				else:
-					state = State.PATROL
-					anim.get("parameters/playback").travel("walk")
-					anim_state = "walk"
+					state = State.RETURN
+					anim.get("parameters/playback").travel("run")
+					anim_state = "run"
 					player = null
+			State.RETURN:
+				_return_to_start(delta)
 		if velocity.x > 0:
 			$AnimatedSprite2D/Swing/SwingCol.position.x = 37
 			$AnimatedSprite2D/Swing/SwingCol.rotation = 41
@@ -81,8 +89,21 @@ func _physics_process(delta):
 		}
 		Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
 
+func _return_to_start(delta):
+	var return_speed = patrol_speed * 1.5  # Faster return speed
+	var direction = sign(initial_position.x - position.x)
+	velocity.x = direction * return_speed
+	move_and_slide()
+	
+	# When close to initial position, resume patrol
+	if abs(position.x - initial_position.x) < 5:
+		position.x = initial_position.x  # Snap to exact position
+		patrol_direction = 1 if randf() > 0.5 else -1  # Randomize new patrol direction
+		state = State.PATROL
+
 func _patrol(delta):
 	velocity.x = patrol_direction * patrol_speed
+	
 	position.x += velocity.x * delta
 	if position.x < left_bound:
 		position.x = left_bound
@@ -92,12 +113,12 @@ func _patrol(delta):
 		patrol_direction = -1
 	move_and_slide()
 
-func _see_player() -> bool:
-	eye.enabled = true
-	eye.target_position.x = 80 * patrol_direction
-	if eye.is_colliding():
-		var collider = eye.get_collider()
+func _see_player(col) -> bool:
+	if col.is_colliding():
+		print("collide")
+		var collider = col.get_collider()
 		if collider and collider.is_in_group("Player"):
+			print("group")
 			player = collider
 			return true
 	return false
@@ -106,6 +127,7 @@ func _chase_player(delta):
 	if player and player.is_inside_tree():
 		var dir = sign(player.global_position.x - global_position.x)
 		velocity.x = dir * chase_speed
+		
 		move_and_slide()
 	else:
 		state = State.PATROL

@@ -12,6 +12,7 @@ var direction = ""
 var last_dir = ""
 func _ready():
 	$Camera2D.enabled = is_local_player
+	add_to_group("Player")
 
 func _process(delta):
 	if is_local_player:
