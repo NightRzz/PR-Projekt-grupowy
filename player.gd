@@ -40,10 +40,12 @@ func _physics_process(delta):
 			anim.set("parameters/run/BlendSpace2D/blend_position", Vector2(-1, 0))
 			anim.set("parameters/jump/BlendSpace2D/blend_position", Vector2(-1, 0))
 			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(-1, 0))
+			anim.set("parameters/attack/BlendSpace2D/blend_position", Vector2(-1, 0))
 		elif velocity.x > 0:
 			anim.set("parameters/run/BlendSpace2D/blend_position", Vector2(1, 0))
 			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(1, 0))
 			anim.set("parameters/jump/BlendSpace2D/blend_position", Vector2(1, 0))
+			anim.set("parameters/attack/BlendSpace2D/blend_position", Vector2(1, 0))
 
 		if Input.is_action_just_pressed("up") and ($RayCast2D.is_colliding() or $RayCast2D2.is_colliding()):
 			velocity.y = JUMP_VELOCITY
@@ -55,9 +57,17 @@ func _physics_process(delta):
 		else:
 			anim.get("parameters/playback").travel("idle")
 			anim_state = "idle"
+		if Input.is_action_just_pressed("attack"):
+			anim.get("parameters/playback").travel("attack")
+			anim_state = "attack"
 		last_dir = direction
 		direction = "right" if velocity.x > 0 else ("left" if velocity.x < 0 else last_dir)
-			
+		var col_pos = 40 if process_priority == 1 else 32
+		if velocity.x > 0:
+			$AnimatedSprite2D/Swing/SwingCol.position.x = col_pos
+		elif velocity.x < 0:
+			$AnimatedSprite2D/Swing/SwingCol.position.x = -col_pos
+
 		move_and_slide()
 
 func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0, anim_state: String = "idle", direction: String = "right"):

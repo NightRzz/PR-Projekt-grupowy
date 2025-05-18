@@ -42,7 +42,6 @@ func _on_create_lobby():
 	if !_validate_username(Global.username):
 		return
 	
-	Global.udp.connect_to_host(Global.server_ip, Global.server_port)
 	var message = {
 		"type": "create_lobby",
 		"username": Global.username
@@ -58,7 +57,7 @@ func _on_join_lobby():
 	if !_validate_username(Global.username) || Global.lobby_id.length() != 4:
 		return
 	
-	Global.udp.connect_to_host(Global.server_ip, Global.server_port)
+
 	var message = {
 		"type": "find_lobby",
 		"lobby_id": Global.lobby_id,

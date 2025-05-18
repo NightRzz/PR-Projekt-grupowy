@@ -8,6 +8,9 @@ var character_scenes = {
 }
 var selected_character = "warrior" 
 
+var enemies = {}
+			
+var enemy_scene = preload("res://enemy.tscn") 
 
 func _ready():
 	# Setup timer to receive UDP packets
@@ -50,6 +53,35 @@ func _handle_server_message(data):
 			_update_player_position(data.id, data.position, data.velocity, data.anim_state, data.direction)
 		"character_changed":
 			_update_player_character(data.id, data.character)
+		"spawn_enemy":
+			_spawn_enemy(data.enemy_id, data.is_host ,data.position, data.character)
+		"enemy_sync":
+			_sync_enemies(data.enemies)
+			
+func _spawn_enemy(eid: String,is_host: bool, pos: Array, character: String):
+	if character == "Skeleton":
+		var enemy_scene = preload("res://enemy.tscn") 
+	var enemy = enemy_scene.instantiate()
+	enemy.position.x = pos[0]
+	enemy.position.y = pos[1]
+	enemy.is_owner = is_host
+	
+	$Enemies.add_child(enemy)
+	enemy.get_node("AnimatedSprite2D").animation = "walk"
+	enemy.anim_state = "walk"
+	enemy.anim.get("parameters/playback").travel("walk")
+	enemies[eid] = enemy
+		
+func _sync_enemies(enemy_states):
+	for eid in enemy_states:
+		var e = enemy_states[eid]
+		if enemies.has(eid) and not enemies[eid].is_owner:
+			print("remote")
+			enemies[eid].update_remote_transform(
+				e.position[0], e.position[1],
+				e.velocity[0], e.velocity[1],
+				e.anim_state, e.direction
+			)
 func _update_player_character(id: String, character: String):
 	if not players.has(id):
 		return
