@@ -141,6 +141,7 @@ class MessageRouter:
             'character_select': self.handle_character_select
         }
 
+
     def route(self, msg, addr):
         handler = self.handlers.get(msg.get('type'), self.unknown_command)
         handler(msg, addr)
@@ -234,15 +235,18 @@ class MessageRouter:
         pid = str(addr)
         lid = self.server.lobby_manager.waiting_players.get(pid)
         session = self.server.game_sessions.get(lid)
-        print("xd1")
         if session:
-            for eid in session.state['enemies']:
-                print("xd")
-                eid.update({
-                    'position': msg.get('position', eid['position']),
-                    'velocity': msg.get('velocity', eid['velocity']),
-                    'anim_state': msg.get('anim_state', eid['anim_state']),
-                    'direction': msg.get('direction', eid['direction']),
+            if pid != session.lobby.host:
+                print(f"Warning: Non-owner {pid} tried to send enemy update.")
+                return
+            enemy_id = msg.get('enemy_id')
+            if enemy_id and enemy_id in session.state['enemies']:
+                enemy_to_update = session.state['enemies'][enemy_id]
+                enemy_to_update.update({
+                    'position': msg.get('position', enemy_to_update['position']),
+                    'velocity': msg.get('velocity', enemy_to_update['velocity']),
+                    'anim_state': msg.get('anim_state', enemy_to_update['anim_state']),
+                    'direction': msg.get('direction', enemy_to_update['direction']),
                 })
 
     def handle_player_ready(self, msg, addr):
@@ -254,10 +258,7 @@ class MessageRouter:
         lobby.ready_players = getattr(lobby, 'ready_players', set())
         lobby.ready_players.add(pid)
         session = self.server.game_sessions.get(lid)
-        pid2 = 0
         for other_pid, other_p in lobby.players.items():
-            if str(pid) != str(other_pid):
-                pid2 = other_pid
             self.server.send_json({
                 'type': 'spawn_player',
                 'id': other_pid,
@@ -270,7 +271,7 @@ class MessageRouter:
             self.server.send_json({
                 'type': 'spawn_enemy',
                 'enemy_id': str(eid),
-                'is_host': (str(pid) != str(pid2)),
+                'is_host': (str(pid) == str(lobby.host)),
                 'position': session.state['enemies'].get(eid, {}).get('position', [0, 0]) if session else [0, 0],
                 'character': session.state['enemies'][eid].get('character', 'Skeleton')
             }, lobby.players[pid]['addr'])

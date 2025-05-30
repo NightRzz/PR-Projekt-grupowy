@@ -771,6 +771,7 @@ position = Vector2(0, 10.5)
 scale = Vector2(1, 0.835938)
 sprite_frames = SubResource("SpriteFrames_pylmc")
 animation = &"attack"
+frame = 1
 
 [node name="Swing" type="Area2D" parent="AnimatedSprite2D"]
 

@@ -4,6 +4,7 @@ extends CharacterBody2D
 @export var patrol_speed := 50.0
 @export var chase_speed := 150.0
 @export var is_owner := false
+@export var enemy_id := ""
 var left_bound : float
 var right_bound : float
 var patrol_direction := 1
@@ -80,10 +81,12 @@ func _physics_process(delta):
 		last_dir = direction
 		direction = "right" if velocity.x > 0 else ("left" if velocity.x < 0 else last_dir)
 		# Send enemy state to clients
+		print(enemy_id)
 		var data = {
 			"type": "enemy_status",
+			"enemy_id": enemy_id,
 			"position": [position.x, position.y],
-			"velocity": [velocity.x, velocity.y],
+			"velocity": [velocity.x, velocity.y], # Server might use this or just position
 			"anim_state": anim_state,
 			"direction": direction
 		}

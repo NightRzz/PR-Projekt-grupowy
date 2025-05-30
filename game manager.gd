@@ -64,6 +64,7 @@ func _spawn_enemy(eid: String,is_host: bool, pos: Array, character: String):
 	var enemy = enemy_scene.instantiate()
 	enemy.position.x = pos[0]
 	enemy.position.y = pos[1]
+	enemy.enemy_id = eid
 	enemy.is_owner = is_host
 	
 	$Enemies.add_child(enemy)
