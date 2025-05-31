@@ -293,7 +293,7 @@ class MessageRouter:
 # --- GŁÓWNY SERWER ---
 
 class GameServer:
-    def __init__(self, host='192.168.0.164', port=9999):
+    def __init__(self, host='192.168.1.146', port=9999):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((host, port))
         self.lobby_manager = LobbyManager()

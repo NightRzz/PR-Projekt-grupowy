@@ -24,6 +24,12 @@ func _process(delta):
 			"direction": direction
 		}
 		Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
+		
+		var points_txt = var_to_str(velocity) #TODO: DODAJ PUNKTACJĘ
+		get_node("Camera2D/GUI/Points").text = "Punkty: " + points_txt
+		var lifes_txt = var_to_str(JUMP_VELOCITY) #TODO: DODAJ ZYCIE
+		get_node("Camera2D/GUI/Health").text = "Życia: " + lifes_txt
+
 
 func _physics_process(delta):
 	if is_local_player:
