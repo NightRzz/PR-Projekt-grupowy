@@ -138,7 +138,8 @@ class MessageRouter:
             'player_input': self.handle_player_input,
             'player_ready': self.handle_player_ready,
             'enemy_status': self.handle_enemy_status,
-            'character_select': self.handle_character_select
+            'character_select': self.handle_character_select,
+            'update_health': self.handle_update_health
         }
 
 
@@ -290,6 +291,17 @@ class MessageRouter:
     def unknown_command(self, msg, addr):
         self.server.send_error(addr, "Unknown command")
 
+    def handle_update_health(self, msg, addr):
+        pid = str(addr)
+        lid = self.server.lobby_manager.waiting_players.get(pid)
+        session = self.server.game_sessions.get(lid)
+        if not session:
+            return
+        health = msg.get('health')
+        if health is not None and pid in session.state['players']:
+            session.state['players'][pid]['health'] = health
+
+
 # --- GŁÓWNY SERWER ---
 
 class GameServer:
@@ -348,9 +360,15 @@ class GameServer:
                             **pdata
                         }, p['addr'])
                         self.send_json({
+                            'type': 'player_health',
+                            'id': pid,
+                            'health': pdata.get('health', 3)
+                        }, p['addr'])
+                        self.send_json({
                             'type': 'enemy_sync',
                             'enemies': session.state['enemies']
                         }, p['addr'])
+                        
             time.sleep(0.01)
 
     # --- WSPÓLNE METODY ---

@@ -57,6 +57,16 @@ func _handle_server_message(data):
 			_spawn_enemy(data.enemy_id, data.is_host ,data.position, data.character)
 		"enemy_sync":
 			_sync_enemies(data.enemies)
+		"player_health":
+			_update_player_health(data.id, data.health)
+
+func _update_player_health(id: String, health: int) -> void:
+	if has_node("Players/" + id):
+		var other_player = get_node("Players/" + id)
+		other_player.current_health = health
+		if health <= 0:
+			other_player.die()
+
 			
 func _spawn_enemy(eid: String,is_host: bool, pos: Array, character: String):
 	if character == "Skeleton":

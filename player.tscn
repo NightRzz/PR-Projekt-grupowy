@@ -729,6 +729,7 @@ graph_offset = Vector2(14, 8)
 [node name="CharacterBody2D" type="CharacterBody2D"]
 process_priority = 1
 physics_interpolation_mode = 1
+collision_mask = 2
 up_direction = Vector2(0.999528, -0.0307246)
 script = ExtResource("1_4flbx")
 
@@ -762,6 +763,13 @@ offset_left = 25.0
 offset_top = 63.0
 offset_right = 111.0
 offset_bottom = 108.0
+label_settings = ExtResource("2_2hs0m")
+
+[node name="DeadInfo" type="Label" parent="Camera2D/GUI"]
+offset_left = 586.0
+offset_top = 299.0
+offset_right = 757.0
+offset_bottom = 344.0
 label_settings = ExtResource("2_2hs0m")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
