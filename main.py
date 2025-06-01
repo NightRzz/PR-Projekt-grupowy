@@ -99,7 +99,9 @@ class GameSession:
                 'position': spawn_pos[i],
                 'velocity': [0, 0],
                 'anim_state': 'idle',
-                'direction': 'right'
+                'direction': 'right',
+                'health': 3, 
+                'is_dead': False,
             }
         for i in range(self.enemy_count):
             self.state['enemies'][str(uuid.uuid4())[:4].upper()] = {
@@ -107,7 +109,9 @@ class GameSession:
                 'velocity': [0, 0],
                 'anim_state': 'idle',
                 'direction': 'right',
-                'character': 'Skeleton'
+                'character': 'Skeleton',
+                'health': 3,
+                'is_dead': False,
             }
 
     def update_player(self, pid, msg):
@@ -139,7 +143,8 @@ class MessageRouter:
             'player_ready': self.handle_player_ready,
             'enemy_status': self.handle_enemy_status,
             'character_select': self.handle_character_select,
-            'update_health': self.handle_update_health
+            'update_health': self.handle_update_health,
+            'update_enemy_health': self.handle_update_enemy_health
         }
 
 
@@ -310,7 +315,32 @@ class MessageRouter:
             if health <= 0:
                 session.state['players'][pid]['is_dead'] = True
 
+    def handle_update_enemy_health(self, msg, addr):
+        pid = str(addr)
+        lid = self.server.lobby_manager.waiting_players.get(pid)
+        session = self.server.game_sessions.get(lid)
+        if not session:
+            return
+        health = msg.get('health')
+        eid = msg.get('enemy_id')
+        if health is not None and eid in session.state['enemies']:
+            session.state['enemies'][eid]['health'] = health
 
+            if health <= 0:
+                session.state['enemies'][eid]['is_dead'] = True
+                session.state['enemies'][eid]['anim_state'] = 'dead'
+            else:
+                session.state['enemies'][eid]['anim_state'] = 'hurt'
+        data = {
+            'type': 'enemy_update',
+            'enemy_id': eid,
+            'health': health,
+            'anim_state': session.state['enemies'][eid]['anim_state'],
+            'is_dead': session.state['enemies'][eid].get('is_dead', False),
+            'position': session.state['enemies'][eid].get('position', [0,0]),
+            'direction': session.state['enemies'][eid].get('direction', 'right'),
+        }
+        self.server.broadcast(session.lobby, data)
 
 # --- GŁÓWNY SERWER ---
 
@@ -374,6 +404,13 @@ class GameServer:
                             'id': pid,
                             'health': pdata.get('health', 3)
                         }, p['addr'])
+                        for eid, edata in session.state['enemies'].items():
+                            self.send_json({
+                                'type': 'enemy_health',
+                                'id': eid,
+                                'health': edata.get('health', 3),
+                                'anim_state': edata.get('anim_state', 'idle'),
+                            }, p['addr'])
                         self.send_json({
                             'type': 'enemy_sync',
                             'enemies': session.state['enemies']

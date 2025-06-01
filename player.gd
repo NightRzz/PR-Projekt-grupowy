@@ -14,6 +14,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var anim_state = ""
 var direction = ""
 var last_dir = ""
+var spectate_target = null
 
 
 func _ready():
@@ -32,7 +33,8 @@ func _process(delta):
 			"direction": direction
 		}
 		Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
-		
+		if is_dead and is_local_player and spectate_target:
+			$Camera2D.global_position = spectate_target.global_position
 		var points_txt = var_to_str(velocity) #TODO: DODAJ PUNKTACJĘ
 		get_node("Camera2D/GUI/Points").text = "Punkty: " + points_txt
 		var lifes_txt = var_to_str(current_health)
@@ -92,10 +94,6 @@ func _physics_process(delta):
 			$AnimatedSprite2D/Swing/SwingCol.position.x = -col_pos
 
 		move_and_slide()
-		for i in get_slide_collision_count():
-			var collision = get_slide_collision(i)
-			print("Collided with: ", collision.get_collider().name)
-		
 
 func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0, anim_state: String = "idle", direction: String = "right"):
 	if !is_local_player:
@@ -104,6 +102,11 @@ func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y
 		anim.get("parameters/playback").travel(anim_state)
 		var blend = Vector2(1, 0) if direction == "right" else Vector2(-1, 0)
 		anim.set("parameters/%s/BlendSpace2D/blend_position" % anim_state, blend)
+		var col_pos = 40 if process_priority == 1 else 32
+		if velocity.x > 0:
+			$AnimatedSprite2D/Swing/SwingCol.position.x = col_pos
+		elif velocity.x < 0:
+			$AnimatedSprite2D/Swing/SwingCol.position.x = -col_pos
 
 	
 func take_damage(amount: int):
@@ -115,13 +118,22 @@ func take_damage(amount: int):
 	else:
 		print("Player died")
 		position.x = -100000
+		var players = get_tree().get_nodes_in_group("Player")
+		for p in players:
+			if p != self:
+				spectate_target = p
+				break
 		current_health = 0
 		is_dead = true
 		get_node("Camera2D/GUI/DeadInfo").text = "Nie zyjesz!"
 		get_node("Camera2D/GUI/PointsFinal").text = "Punkty: TODO"
 		get_node("Camera2D/GUI/DeadGraphic").visible = true
 	send_health_to_server()
-	
+
+func _on_swing_body_entered(body: Node2D) -> void:
+	if body is CharacterBody2D and body.has_method("enemy_take_damage"):
+		body.enemy_take_damage() 
+
 func send_health_to_server():
 	var data = {
 		"type": "update_health",

@@ -59,6 +59,8 @@ func _handle_server_message(data):
 			_sync_enemies(data.enemies)
 		"player_health":
 			_update_player_health(data.id, data.health)
+		"enemy_update":
+			_update_enemy(data.enemy_id, data.health, data.anim_state)
 		"return_to_lobby":
 			get_tree().change_scene_to_file("res://lobby.tscn")
 
@@ -68,8 +70,11 @@ func _update_player_health(id: String, health: int) -> void:
 		other_player.current_health = health
 		if health <= 0:
 			other_player.die()
-
 			
+func _update_enemy(enemy_id: String, health: int, anim_state: String) -> void:
+	var enemy = get_node("Enemies/" + enemy_id)	
+	if enemy:
+		enemy.update_enemy_state(health, anim_state)
 func _spawn_enemy(eid: String,is_host: bool, pos: Array, character: String):
 	if character == "Skeleton":
 		var enemy_scene = preload("res://enemy.tscn") 
@@ -93,7 +98,7 @@ func _sync_enemies(enemy_states):
 			enemies[eid].update_remote_transform(
 				e.position[0], e.position[1],
 				e.velocity[0], e.velocity[1],
-				e.anim_state, e.direction
+				e.anim_state, e.direction, e.health
 			)
 func _update_player_character(id: String, character: String):
 	if not players.has(id):
@@ -102,6 +107,7 @@ func _update_player_character(id: String, character: String):
 	var pos = old_player.position
 	1
 	var is_local = old_player.is_local_player
+	var current_health = old_player.current_health
 	var nickname = ""
 	if old_player.has_node("Nickname"):
 		nickname = old_player.get_node("Nickname").text
@@ -113,6 +119,7 @@ func _update_player_character(id: String, character: String):
 	player.position = pos
 	player.player_id = id
 	player.is_local_player = is_local
+	player.current_health = current_health
 	if !is_local and player.has_node("Nickname"):
 		player.get_node("Nickname").text = nickname
 	if is_local:

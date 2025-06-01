@@ -278,6 +278,18 @@ tracks/2/keys = {
 "update": 1,
 "values": [&"attack"]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Swing/SwingCol:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_opasm"]
 resource_name = "attack_l"
@@ -319,6 +331,18 @@ tracks/2/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Swing/SwingCol:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.199043, 0.300729),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
 
 [sub_resource type="Animation" id="Animation_y3neu"]
 resource_name = "attack_r"
@@ -347,6 +371,30 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Swing/SwingCol:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.199043, 0.299106),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:flip_h")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_efrwb"]
@@ -820,6 +868,7 @@ collision_mask = 3
 position = Vector2(-41, 23.3271)
 rotation = -1.55906
 shape = SubResource("CapsuleShape2D_uqwy3")
+disabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["Player"]]
 physics_interpolation_mode = 1
@@ -858,3 +907,5 @@ offset_bottom = -4.0
 theme_override_colors/font_color = Color(0.968627, 0.890196, 0.780392, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
+
+[connection signal="body_entered" from="AnimatedSprite2D/Swing" to="." method="_on_swing_body_entered"]

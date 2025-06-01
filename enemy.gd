@@ -5,6 +5,8 @@ extends CharacterBody2D
 @export var chase_speed := 150.0
 @export var is_owner := false
 @export var enemy_id := ""
+var current_health = 3
+var is_dead = false
 var left_bound : float
 var right_bound : float
 var patrol_direction := 1
@@ -36,8 +38,17 @@ func _ready():
 	anim.get("parameters/playback").travel("walk")
 	anim_state = "walk"
 
+func update_enemy_state(new_health: int, new_anim_state: String) -> void:
+	current_health = new_health
+	if current_health <= 0:
+		is_dead = true
+	else:
+		is_dead = false
+	anim.get("parameters/playback").travel(new_anim_state)
+
+
 func _physics_process(delta):
-	if is_owner:
+	if is_owner and not is_dead:
 		if not ($RayCast2D.is_colliding() or $RayCast2D2.is_colliding()):
 			velocity.y += gravity * delta
 		else:
@@ -47,11 +58,15 @@ func _physics_process(delta):
 			anim.set("parameters/walk/BlendSpace2D/blend_position", Vector2(-1, 0))
 			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(-1, 0))
 			anim.set("parameters/attack/BlendSpace2D/blend_position", Vector2(-1, 0))
+			anim.set("parameters/hurt/BlendSpace2D/blend_position", Vector2(-1, 0))
+			anim.set("parameters/dead/blend_position", Vector2(-1, 0))
 		elif velocity.x > 0:
 			anim.set("parameters/run/BlendSpace2D/blend_position", Vector2(1, 0))
 			anim.set("parameters/idle/BlendSpace2D/blend_position", Vector2(1, 0))
 			anim.set("parameters/walk/BlendSpace2D/blend_position", Vector2(1, 0))
 			anim.set("parameters/attack/BlendSpace2D/blend_position", Vector2(1, 0))
+			anim.set("parameters/hurt/BlendSpace2D/blend_position", Vector2(1, 0))
+			anim.set("parameters/dead/BlendSpace2D/blend_position", Vector2(1, 0))
 		match state:
 			State.PATROL:
 				anim.get("parameters/playback").travel("walk")
@@ -88,13 +103,12 @@ func _physics_process(delta):
 			$Eye.target_position.x = -155
 		last_dir = direction
 		direction = "right" if velocity.x > 0 else ("left" if velocity.x < 0 else last_dir)
-		# Send enemy state to clients
-		
+
 		var data = {
 			"type": "enemy_status",
 			"enemy_id": enemy_id,
 			"position": [position.x, position.y],
-			"velocity": [velocity.x, velocity.y], # Server might use this or just position
+			"velocity": [velocity.x, velocity.y], 
 			"anim_state": anim_state,
 			"direction": direction
 		}
@@ -148,18 +162,22 @@ func _chase_player(delta):
 	else:
 		state = State.PATROL
 		anim.get("parameters/playback").travel("walk")
+		anim_state = "walk"
 		player = null
 		
-func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0, anim_state: String = "idle", direction: String = "right"):
+func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0, anim_state: String = "idle", direction: String = "right", current_health: int = 3):
 	position = Vector2(pos_x, pos_y)
 	velocity = Vector2(vel_x, vel_y)
 	self.anim_state = anim_state
+	self.current_health = current_health
 	anim.get("parameters/playback").travel(anim_state)
 	var blend = Vector2(1, 0) if direction == "right" else Vector2(-1, 0)
 	anim.set("parameters/walk/BlendSpace2D/blend_position", blend)
 	anim.set("parameters/run/BlendSpace2D/blend_position", blend)
 	anim.set("parameters/idle/BlendSpace2D/blend_position", blend)
 	anim.set("parameters/attack/BlendSpace2D/blend_position", blend)
+	anim.set("parameters/hurt/BlendSpace2D/blend_position", blend)
+	anim.set("parameters/dead/BlendSpace2D/blend_position", blend)
 	if velocity.x > 0:
 		$AnimatedSprite2D/Swing/SwingCol.position.x = 37
 		$AnimatedSprite2D/Swing/SwingCol.rotation = 41
@@ -171,6 +189,27 @@ func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y
 		$CloseDistance.target_position.x = -21
 		$Eye.target_position.x = -155
 
+func enemy_take_damage():
+	current_health -= 1
+	print("HURTTTTTTTTTTTTTTT")
+	if current_health > 0:
+		anim.get("parameters/playback").travel("hurt")
+		anim_state = "hurt"
+	else:
+		print("Enemy died")
+		current_health = 0
+		anim.get("parameters/playback").travel("dead")
+		anim_state = "dead"
+		is_dead = true
+	send_enemy_health_to_server()
+
+func send_enemy_health_to_server():
+	var data = {
+		"type": "update_enemy_health",
+		"enemy_id": enemy_id,
+		"health": current_health
+	}
+	Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
 
 func _on_swing_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.has_method("take_damage"):
