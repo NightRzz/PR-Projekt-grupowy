@@ -279,14 +279,21 @@ class MessageRouter:
 
     def handle_character_select(self, msg, addr):
         pid = str(addr)
+        lid = self.server.lobby_manager.waiting_players.get(pid)
+        session = self.server.game_sessions.get(lid)
+
+        if session:
+            player_state = session.state['players'].get(pid)
+            if player_state and player_state.get('health', 1) <= 0:
+                self.server.send_error(addr, "Nie można zmienić postaci – gracz martwy.")
+                return
+
         char = msg.get('character', 'warrior')
         self.server.player_manager.set_character(pid, char)
-        lid = self.server.lobby_manager.waiting_players.get(pid)
-        if not lid:
-            return
         lobby = self.server.lobby_manager.lobbies[lid]
         for p in lobby.players.values():
             self.server.send_json({'type': 'character_changed', 'id': pid, 'character': char}, p['addr'])
+
 
     def unknown_command(self, msg, addr):
         self.server.send_error(addr, "Unknown command")
@@ -300,6 +307,9 @@ class MessageRouter:
         health = msg.get('health')
         if health is not None and pid in session.state['players']:
             session.state['players'][pid]['health'] = health
+            if health <= 0:
+                session.state['players'][pid]['is_dead'] = True
+
 
 
 # --- GŁÓWNY SERWER ---
@@ -368,6 +378,16 @@ class GameServer:
                             'type': 'enemy_sync',
                             'enemies': session.state['enemies']
                         }, p['addr'])
+                if all(p.get('health', 1) <= 0 for p in session.state['players'].values()):
+                    print("Wszyscy gracze nie żyją – powrót do lobby za 5 sekund")
+                    time.sleep(5)
+                    for p in lobby.players.values():
+                        self.send_json({'type': 'return_to_lobby'}, p['addr'])
+
+                    del self.game_sessions[lobby.id]
+                    lobby.state = LobbyState.WAITING
+                    return
+
                         
             time.sleep(0.01)
 

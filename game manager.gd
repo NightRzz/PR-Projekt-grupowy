@@ -59,6 +59,8 @@ func _handle_server_message(data):
 			_sync_enemies(data.enemies)
 		"player_health":
 			_update_player_health(data.id, data.health)
+		"return_to_lobby":
+			get_tree().change_scene_to_file("res://lobby.tscn")
 
 func _update_player_health(id: String, health: int) -> void:
 	if has_node("Players/" + id):

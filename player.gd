@@ -7,11 +7,14 @@ const SPEED = 300
 const JUMP_VELOCITY = -400.0
 var max_health := 3
 var current_health := max_health
+var is_dead = false
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var anim = get_node("AnimationTree")
 var anim_state = ""
 var direction = ""
 var last_dir = ""
+
+
 func _ready():
 	$Camera2D.enabled = is_local_player
 	add_to_group("Player")
@@ -37,7 +40,7 @@ func _process(delta):
 
 
 func _physics_process(delta):
-	if is_local_player:
+	if is_local_player and is_dead == false:
 		# Only get horizontal input
 		var horizontal = Input.get_action_strength("right") - Input.get_action_strength("left")
 		velocity.x = horizontal * SPEED
@@ -110,11 +113,13 @@ func take_damage(amount: int):
 	else:
 		print("Player died")
 		position.x = -100000
-		current_health = 0;
+		current_health = 0
+		is_dead = true
 		get_node("Camera2D/GUI/DeadInfo").text = "Nie zyjesz!"
+		get_node("Camera2D/GUI/PointsFinal").text = "Punkty: TODO"
+		get_node("Camera2D/GUI/DeadGraphic").visible = true
 	send_health_to_server()
 	
-#TODO: DODAĆ CO SIĘ DZIEJE GDY OBOJE Z GRACZY MAJĄ 0HP
 func send_health_to_server():
 	var data = {
 		"type": "update_health",
