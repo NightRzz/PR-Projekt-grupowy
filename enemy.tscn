@@ -774,6 +774,8 @@ _data = {
 }
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_3yqyl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -782,8 +784,8 @@ animation = &"idle"
 frame = 1
 
 [node name="Swing" type="Area2D" parent="AnimatedSprite2D"]
-collision_layer = 3
-collision_mask = 3
+collision_layer = 2
+collision_mask = 2
 
 [node name="SwingCol" type="CollisionShape2D" parent="AnimatedSprite2D/Swing"]
 position = Vector2(37, 19)

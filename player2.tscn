@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bu6kkp5f2rcjj" path="res://sprites/1/Samurai/Idle.png" id="2_rihsh"]
 [ext_resource type="Texture2D" uid="uid://bd8ako5mt84ke" path="res://sprites/1/Samurai/Attack_2.png" id="2_uqwy3"]
 [ext_resource type="Texture2D" uid="uid://b2kufjpabkjc1" path="res://sprites/1/Samurai/Attack_3.png" id="3_8caby"]
-[ext_resource type="LabelSettings" uid="uid://csxyhd5b3p4rq" path="res://napisy_GUI_smierc.tres" id="3_61wwb"]
+[ext_resource type="LabelSettings" uid="uid://2boeqypdh5mf" path="res://napisy_GUI_smierc.tres" id="3_61wwb"]
 [ext_resource type="Texture2D" uid="uid://cj626snww1rk3" path="res://sprites/1/Samurai/Jump.png" id="3_tj0vx"]
 [ext_resource type="Texture2D" uid="uid://erby4g126j1c" path="res://sprites/1/Samurai/Run.png" id="4_bhnal"]
 
@@ -749,7 +749,8 @@ graph_offset = Vector2(7, 26)
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 physics_interpolation_mode = 1
-collision_mask = 0
+collision_layer = 3
+collision_mask = 3
 up_direction = Vector2(0.999528, -0.0307246)
 script = ExtResource("1_tj0vx")
 
@@ -812,6 +813,8 @@ sprite_frames = SubResource("SpriteFrames_pylmc")
 animation = &"attack"
 
 [node name="Swing" type="Area2D" parent="AnimatedSprite2D"]
+collision_layer = 2
+collision_mask = 3
 
 [node name="SwingCol" type="CollisionShape2D" parent="AnimatedSprite2D/Swing"]
 position = Vector2(-41, 23.3271)

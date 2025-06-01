@@ -174,4 +174,4 @@ func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y
 
 func _on_swing_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.has_method("take_damage"):
-		body.take_damage(1) 
+		body.isAttacked = true 

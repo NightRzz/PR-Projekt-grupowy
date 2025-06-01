@@ -6,6 +6,7 @@ var is_local_player := false
 const SPEED = 300
 const JUMP_VELOCITY = -400.0
 var max_health := 3
+var isAttacked := false
 var current_health := max_health
 var is_dead = false
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -36,8 +37,9 @@ func _process(delta):
 		get_node("Camera2D/GUI/Points").text = "Punkty: " + points_txt
 		var lifes_txt = var_to_str(current_health)
 		get_node("Camera2D/GUI/Health").text = "Życia: " + lifes_txt
-
-
+		if isAttacked:
+			take_damage(1)
+			isAttacked = false
 
 func _physics_process(delta):
 	if is_local_player and is_dead == false:
