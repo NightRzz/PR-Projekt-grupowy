@@ -15,7 +15,7 @@ var last_dir = ""
 func _ready():
 	$Camera2D.enabled = is_local_player
 	add_to_group("Player")
-
+	
 	
 
 func _process(delta):
@@ -87,6 +87,9 @@ func _physics_process(delta):
 			$AnimatedSprite2D/Swing/SwingCol.position.x = -col_pos
 
 		move_and_slide()
+		for i in get_slide_collision_count():
+			var collision = get_slide_collision(i)
+			print("Collided with: ", collision.get_collider().name)
 		
 
 func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y: float = 0, anim_state: String = "idle", direction: String = "right"):

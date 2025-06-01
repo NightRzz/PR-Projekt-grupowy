@@ -14,6 +14,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var anim = get_node("AnimationTree")
 @onready var eye = $Eye
 @onready var sword = $AnimatedSprite2D/Swing/SwingCol
+@onready var CloseDistance = $CloseDistance
 var anim_state = "walk"
 var direction = ""
 var last_dir = ""
@@ -63,10 +64,15 @@ func _physics_process(delta):
 			State.CHASE:
 				if _see_player(eye):
 					_chase_player(delta)
+					if _see_player(CloseDistance):
+						_attack_player()
+						
 				else:
 					state = State.RETURN
 					anim.get("parameters/playback").travel("run")
 					anim_state = "run"
+					if _see_player(CloseDistance):
+						_attack_player()
 					player = null
 			State.RETURN:
 				_return_to_start(delta)
@@ -74,14 +80,16 @@ func _physics_process(delta):
 			$AnimatedSprite2D/Swing/SwingCol.position.x = 37
 			$AnimatedSprite2D/Swing/SwingCol.rotation = 41
 			$Eye.target_position.x = 155
+			$CloseDistance.target_position.x = 19
 		elif velocity.x < 0:
 			$AnimatedSprite2D/Swing/SwingCol.position.x = -37
 			$AnimatedSprite2D/Swing/SwingCol.rotation = -41
+			$CloseDistance.target_position.x = -21
 			$Eye.target_position.x = -155
 		last_dir = direction
 		direction = "right" if velocity.x > 0 else ("left" if velocity.x < 0 else last_dir)
 		# Send enemy state to clients
-		print(enemy_id)
+		
 		var data = {
 			"type": "enemy_status",
 			"enemy_id": enemy_id,
@@ -118,19 +126,24 @@ func _patrol(delta):
 
 func _see_player(col) -> bool:
 	if col.is_colliding():
-		print("collide")
+		
 		var collider = col.get_collider()
 		if collider and collider.is_in_group("Player"):
-			print("group")
+			
 			player = collider
 			return true
 	return false
+func _attack_player():
+	anim.get("parameters/playback").travel("attack")
+	anim_state = "attack"
 
+	
 func _chase_player(delta):
 	if player and player.is_inside_tree():
 		var dir = sign(player.global_position.x - global_position.x)
 		velocity.x = dir * chase_speed
-		
+		anim.get("parameters/playback").travel("run")
+		anim_state = "run"
 		move_and_slide()
 	else:
 		state = State.PATROL
@@ -147,3 +160,18 @@ func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y
 	anim.set("parameters/run/BlendSpace2D/blend_position", blend)
 	anim.set("parameters/idle/BlendSpace2D/blend_position", blend)
 	anim.set("parameters/attack/BlendSpace2D/blend_position", blend)
+	if velocity.x > 0:
+		$AnimatedSprite2D/Swing/SwingCol.position.x = 37
+		$AnimatedSprite2D/Swing/SwingCol.rotation = 41
+		$Eye.target_position.x = 155
+		$CloseDistance.target_position.x = 19
+	elif velocity.x < 0:
+		$AnimatedSprite2D/Swing/SwingCol.position.x = -37
+		$AnimatedSprite2D/Swing/SwingCol.rotation = -41
+		$CloseDistance.target_position.x = -21
+		$Eye.target_position.x = -155
+
+
+func _on_swing_body_entered(body: Node2D) -> void:
+	if body is CharacterBody2D and body.has_method("take_damage"):
+		body.take_damage(1) 

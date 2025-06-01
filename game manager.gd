@@ -87,7 +87,7 @@ func _sync_enemies(enemy_states):
 	for eid in enemy_states:
 		var e = enemy_states[eid]
 		if enemies.has(eid) and not enemies[eid].is_owner:
-			print("remote")
+			
 			enemies[eid].update_remote_transform(
 				e.position[0], e.position[1],
 				e.velocity[0], e.velocity[1],

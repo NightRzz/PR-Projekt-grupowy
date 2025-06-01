@@ -1,6 +1,6 @@
 [gd_scene load_steps=82 format=3 uid="uid://c72nmfhy2q5p3"]
 
-[ext_resource type="Script" uid="uid://1wkdvot7hqop" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://dk07vxjvqlu5y" path="res://player.gd" id="1_4flbx"]
 [ext_resource type="LabelSettings" uid="uid://0nxpjtu3i5wd" path="res://napisy_GUI.tres" id="2_2hs0m"]
 [ext_resource type="Texture2D" uid="uid://da00hlhx71yop" path="res://sprites/1/Wanderer Magican/Idle.png" id="2_hqtel"]
 [ext_resource type="Texture2D" uid="uid://c24hf5qd6bmft" path="res://sprites/1/Wanderer Magican/Attack_1.png" id="2_sweqy"]
@@ -726,10 +726,11 @@ states/run/position = Vector2(696, 33)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_ieltc"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_fddr8"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_oybyf"), "idle", "jump", SubResource("AnimationNodeStateMachineTransition_ajfva"), "jump", "idle", SubResource("AnimationNodeStateMachineTransition_5ef02"), "run", "jump", SubResource("AnimationNodeStateMachineTransition_pfmca"), "jump", "run", SubResource("AnimationNodeStateMachineTransition_76oay"), "attack", "run", SubResource("AnimationNodeStateMachineTransition_ivps1"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_urp6f"), "attack", "jump", SubResource("AnimationNodeStateMachineTransition_bwjto"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_606se"), "jump", "attack", SubResource("AnimationNodeStateMachineTransition_u1c27"), "run", "attack", SubResource("AnimationNodeStateMachineTransition_op7ga")]
 graph_offset = Vector2(14, 8)
 
-[node name="CharacterBody2D" type="CharacterBody2D"]
+[node name="CharacterBody2D2" type="CharacterBody2D"]
 process_priority = 1
 physics_interpolation_mode = 1
-collision_mask = 2
+collision_layer = 3
+collision_mask = 3
 up_direction = Vector2(0.999528, -0.0307246)
 script = ExtResource("1_4flbx")
 
@@ -737,8 +738,8 @@ script = ExtResource("1_4flbx")
 zoom = Vector2(1.5, 1.5)
 limit_left = 0
 limit_top = 20
-limit_right = 1280
-limit_bottom = 569
+limit_right = 1680
+limit_bottom = 720
 limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true

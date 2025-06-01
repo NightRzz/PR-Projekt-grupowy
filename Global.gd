@@ -1,6 +1,6 @@
 extends Node
 var udp := PacketPeerUDP.new()
-var server_ip := "192.168.1.146"
+var server_ip := "127.0.0.1"
 var server_port := 9999
 var lobby_id := ""
 var username := ""
