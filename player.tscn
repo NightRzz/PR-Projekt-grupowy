@@ -1,10 +1,9 @@
-[gd_scene load_steps=83 format=3 uid="uid://c72nmfhy2q5p3"]
+[gd_scene load_steps=82 format=3 uid="uid://c72nmfhy2q5p3"]
 
 [ext_resource type="Script" uid="uid://1wkdvot7hqop" path="res://player.gd" id="1_4flbx"]
 [ext_resource type="LabelSettings" uid="uid://0nxpjtu3i5wd" path="res://napisy_GUI.tres" id="2_2hs0m"]
 [ext_resource type="Texture2D" uid="uid://da00hlhx71yop" path="res://sprites/1/Wanderer Magican/Idle.png" id="2_hqtel"]
 [ext_resource type="Texture2D" uid="uid://c24hf5qd6bmft" path="res://sprites/1/Wanderer Magican/Attack_1.png" id="2_sweqy"]
-[ext_resource type="LabelSettings" uid="uid://csxyhd5b3p4rq" path="res://napisy_GUI_smierc.tres" id="3_1jxqw"]
 [ext_resource type="Texture2D" uid="uid://dq5letrh8taix" path="res://sprites/1/Wanderer Magican/Jump.png" id="3_sweqy"]
 [ext_resource type="Texture2D" uid="uid://dntsj6v8difj4" path="res://sprites/1/Wanderer Magican/Run.png" id="4_2hs0m"]
 
@@ -730,7 +729,7 @@ graph_offset = Vector2(14, 8)
 [node name="CharacterBody2D" type="CharacterBody2D"]
 process_priority = 1
 physics_interpolation_mode = 1
-collision_mask = 0
+collision_mask = 2
 up_direction = Vector2(0.999528, -0.0307246)
 script = ExtResource("1_4flbx")
 
@@ -767,24 +766,11 @@ offset_bottom = 108.0
 label_settings = ExtResource("2_2hs0m")
 
 [node name="DeadInfo" type="Label" parent="Camera2D/GUI"]
-offset_left = 441.0
-offset_top = 267.0
-offset_right = 481.0
-offset_bottom = 333.0
-label_settings = ExtResource("3_1jxqw")
-
-[node name="PointsFinal" type="Label" parent="Camera2D/GUI"]
-offset_left = 441.0
-offset_top = 348.0
-offset_right = 481.0
-offset_bottom = 420.0
-label_settings = ExtResource("3_1jxqw")
-
-[node name="DeadGraphic" type="Polygon2D" parent="Camera2D/GUI"]
-visible = false
-scale = Vector2(1.005, 1.005)
-color = Color(0.768627, 0, 0, 0.231373)
-polygon = PackedVector2Array(-181.095, -157.214, -178.109, -157.214, -216.915, 498.507, -122.388, 800.995, 1504.48, 805.97, 1490.55, -163.184, -175.124, -157.214)
+offset_left = 586.0
+offset_top = 299.0
+offset_right = 757.0
+offset_bottom = 344.0
+label_settings = ExtResource("2_2hs0m")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pylmc")
