@@ -190,18 +190,20 @@ func update_remote_transform(pos_x: float, pos_y: float, vel_x: float = 0, vel_y
 		$Eye.target_position.x = -155
 
 func enemy_take_damage():
-	current_health -= 1
-	print("HURTTTTTTTTTTTTTTT")
-	if current_health > 0:
-		anim.get("parameters/playback").travel("hurt")
-		anim_state = "hurt"
-	else:
-		print("Enemy died")
-		current_health = 0
-		anim.get("parameters/playback").travel("dead")
-		anim_state = "dead"
-		is_dead = true
-	send_enemy_health_to_server()
+	if is_owner:
+		current_health -= 1
+		print("HURTTTTTTTTTTTTTTT")
+		if current_health > 0:
+			anim.get("parameters/playback").travel("hurt")
+			anim_state = "hurt"
+		else:
+			print("Enemy died")
+			current_health = 0
+			$CollisionShape2D.set_deferred("disabled", true)
+			anim.get("parameters/playback").travel("dead")
+			anim_state = "dead"
+			is_dead = true
+		send_enemy_health_to_server()
 
 func send_enemy_health_to_server():
 	var data = {
@@ -209,6 +211,7 @@ func send_enemy_health_to_server():
 		"enemy_id": enemy_id,
 		"health": current_health
 	}
+
 	Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
 
 func _on_swing_body_entered(body: Node2D) -> void:

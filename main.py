@@ -102,6 +102,7 @@ class GameSession:
                 'direction': 'right',
                 'health': 3, 
                 'is_dead': False,
+                'points': 0,
             }
         for i in range(self.enemy_count):
             self.state['enemies'][str(uuid.uuid4())[:4].upper()] = {
@@ -143,7 +144,7 @@ class MessageRouter:
             'player_ready': self.handle_player_ready,
             'enemy_status': self.handle_enemy_status,
             'character_select': self.handle_character_select,
-            'update_health': self.handle_update_health,
+            'update_stats': self.handle_update_stats,
             'update_enemy_health': self.handle_update_enemy_health
         }
 
@@ -270,6 +271,7 @@ class MessageRouter:
                 'id': other_pid,
                 'position': session.state['players'].get(other_pid, {}).get('position', [0,0]) if session else [0,0],
                 'is_local': (pid == other_pid),
+                'is_host': (str(pid) == str(lobby.host)),
                 'username': self.server.player_manager.players[other_pid]['username'],
                 'character': self.server.player_manager.players[other_pid].get('character', 'warrior')
             }, lobby.players[pid]['addr'])
@@ -303,15 +305,17 @@ class MessageRouter:
     def unknown_command(self, msg, addr):
         self.server.send_error(addr, "Unknown command")
 
-    def handle_update_health(self, msg, addr):
+    def handle_update_stats(self, msg, addr):
         pid = str(addr)
         lid = self.server.lobby_manager.waiting_players.get(pid)
         session = self.server.game_sessions.get(lid)
         if not session:
             return
         health = msg.get('health')
-        if health is not None and pid in session.state['players']:
+        points = msg.get('points')
+        if health is not None and points is not None and pid in session.state['players']:
             session.state['players'][pid]['health'] = health
+            session.state['players'][pid]['points'] = points
             if health <= 0:
                 session.state['players'][pid]['is_dead'] = True
 
@@ -411,12 +415,15 @@ class GameServer:
                                 'health': edata.get('health', 3),
                                 'anim_state': edata.get('anim_state', 'idle'),
                             }, p['addr'])
+                            
                         self.send_json({
                             'type': 'enemy_sync',
                             'enemies': session.state['enemies']
                         }, p['addr'])
-                if all(p.get('health', 1) <= 0 for p in session.state['players'].values()):
-                    print("Wszyscy gracze nie żyją – powrót do lobby za 5 sekund")
+                if all(p.get('health', 1) <= 0 for p in session.state['players'].values()) or all(e.get('is_dead', True) for e in session.state['enemies'].values()):
+                    if all(e.get('is_dead', True) for e in session.state['enemies'].values()):    
+                        for p in lobby.players.values():
+                            self.send_json({'type': 'finale'}, p['addr'])
                     time.sleep(5)
                     for p in lobby.players.values():
                         self.send_json({'type': 'return_to_lobby'}, p['addr'])

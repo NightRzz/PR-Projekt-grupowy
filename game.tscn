@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=4 uid="uid://dkbnpk82hjud"]
+[gd_scene load_steps=10 format=4 uid="uid://dkbnpk82hjud"]
 
 [ext_resource type="Texture2D" uid="uid://bcklp16tiea42" path="res://sprites/Cave-Grass Tileset/tileset_packed.png" id="1_e2o6t"]
 [ext_resource type="Script" uid="uid://brkyufu6y1rhy" path="res://game manager.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://m685vvuxchwu" path="res://sprites/Cave-Grass Tileset/background 2.png" id="2_fc0e3"]
 [ext_resource type="Texture2D" uid="uid://bh5eowxxg0cjn" path="res://sprites/Cave-Grass Tileset/tileset_readable.png" id="2_feb5d"]
+[ext_resource type="LabelSettings" uid="uid://2boeqypdh5mf" path="res://napisy_GUI_smierc.tres" id="2_ryrav"]
 [ext_resource type="Texture2D" uid="uid://2fq0gwyuv8wr" path="res://sprites/Cave-Grass Tileset/clouds.png" id="5_7jktm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
@@ -498,40 +499,102 @@ sources/2 = SubResource("TileSetAtlasSource_7jktm")
 [node name="Game" type="Node2D"]
 script = ExtResource("1_feb5d")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Final" type="CanvasLayer" parent="."]
 visible = false
 
-[node name="Panel" type="Panel" parent="CanvasLayer"]
+[node name="FinalPanel" type="Panel" parent="Final"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -200.0
-offset_right = 200.0
-offset_bottom = 200.0
+offset_left = -314.0
+offset_top = -297.0
+offset_right = 312.0
+offset_bottom = 298.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1, 0.959)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Final/FinalPanel"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
+offset_left = -94.0
+offset_top = 170.696
+offset_right = 95.0
+offset_bottom = 212.696
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Button" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+[node name="Button" type="Button" parent="Final/FinalPanel/VBoxContainer"]
+layout_mode = 2
+text = "Leave game"
+
+[node name="WinInfo" type="Label" parent="Final/FinalPanel"]
+offset_left = 111.0
+offset_top = 94.8905
+offset_right = 513.0
+offset_bottom = 241.891
+text = "You won!
+Congratulations"
+label_settings = ExtResource("2_ryrav")
+horizontal_alignment = 1
+
+[node name="PointsFinal" type="Label" parent="Final/FinalPanel"]
+offset_left = 86.0
+offset_top = 277.372
+offset_right = 424.0
+offset_bottom = 349.372
+scale = Vector2(0.560475, 0.650869)
+text = "Team points: "
+label_settings = ExtResource("2_ryrav")
+
+[node name="DeadGraphic" type="Polygon2D" parent="Final/FinalPanel"]
+position = Vector2(-326, -65.6934)
+scale = Vector2(1.005, 1.04797)
+color = Color(0, 0.866667, 0.537255, 0.231373)
+polygon = PackedVector2Array(-181.095, -157.214, -178.109, -157.214, -216.915, 498.507, -122.388, 800.995, 1504.48, 805.97, 1490.55, -163.184, -175.124, -157.214)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="EscPanel" type="Panel" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -314.0
+offset_top = -297.0
+offset_right = 312.0
+offset_bottom = 298.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 0.959)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/EscPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.0
+offset_top = -9.7002
+offset_right = 102.0
+offset_bottom = 32.2998
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="CanvasLayer/EscPanel/VBoxContainer"]
 layout_mode = 2
 text = "Leave game"
 

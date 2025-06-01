@@ -789,6 +789,41 @@ drag_bottom_margin = 0.02
 
 [node name="GUI" type="CanvasLayer" parent="Camera2D"]
 
+[node name="EscPanel" type="Panel" parent="Camera2D/GUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -314.0
+offset_top = -297.0
+offset_right = 312.0
+offset_bottom = 298.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 0.959)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D/GUI/EscPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.0
+offset_top = -9.7002
+offset_right = 102.0
+offset_bottom = 32.2998
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="Camera2D/GUI/EscPanel/VBoxContainer"]
+layout_mode = 2
+text = "Leave game"
+
 [node name="Points" type="Label" parent="Camera2D/GUI"]
 offset_left = 23.0
 offset_top = 15.0
@@ -876,4 +911,5 @@ theme_override_colors/font_color = Color(0.968627, 0.890196, 0.780392, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
 
+[connection signal="pressed" from="Camera2D/GUI/EscPanel/VBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="body_entered" from="AnimatedSprite2D/Swing" to="." method="_on_swing_body_entered"]

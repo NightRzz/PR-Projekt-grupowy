@@ -7,7 +7,7 @@ var character_scenes = {
 	"warrior": preload("res://player2.tscn")
 }
 var selected_character = "warrior" 
-
+var game = true
 var enemies = {}
 			
 var enemy_scene = preload("res://enemy.tscn") 
@@ -25,6 +25,7 @@ func _ready():
 	var data = {"type": "player_ready"}
 	Global.udp.put_packet(JSON.stringify(data).to_utf8_buffer())
 
+		
 func _input(event):
 	if event.is_action_pressed("select_character_1"):
 		selected_character = "magician"
@@ -45,8 +46,6 @@ func _process_packets():
 
 func _handle_server_message(data):
 	match data.type:
-		"game_update":
-			_update_game_state(data.state)
 		"spawn_player":
 			_spawn_player(data.id, data.position, data.is_local, data.username, data.character)
 		"player_position":
@@ -63,6 +62,16 @@ func _handle_server_message(data):
 			_update_enemy(data.enemy_id, data.health, data.anim_state)
 		"return_to_lobby":
 			get_tree().change_scene_to_file("res://lobby.tscn")
+		"finale":
+			finale()
+
+func finale():
+	$Final.visible = true
+	var points = 0
+	await get_tree().create_timer(1.0).timeout
+	for p in $Players.get_children():
+		points += p.points
+	$Final/FinalPanel/PointsFinal.text += str(points)
 
 func _update_player_health(id: String, health: int) -> void:
 	if has_node("Players/" + id):
@@ -108,6 +117,7 @@ func _update_player_character(id: String, character: String):
 	1
 	var is_local = old_player.is_local_player
 	var current_health = old_player.current_health
+	var points = old_player.points
 	var nickname = ""
 	if old_player.has_node("Nickname"):
 		nickname = old_player.get_node("Nickname").text
@@ -117,6 +127,7 @@ func _update_player_character(id: String, character: String):
 	var scene = character_scenes.get(character, character_scenes["warrior"])
 	var player = scene.instantiate()
 	player.position = pos
+	player.points = points
 	player.player_id = id
 	player.is_local_player = is_local
 	player.current_health = current_health
@@ -127,9 +138,6 @@ func _update_player_character(id: String, character: String):
 	$Players.add_child(player)
 	players[id] = player
 
-func _update_game_state(state):
-	# Update general game state here
-	pass
 
 func _spawn_player(id: String, position: Array, is_local: bool, nickname: String, character: String = "magician"):
 	if players.has(id):
@@ -139,6 +147,7 @@ func _spawn_player(id: String, position: Array, is_local: bool, nickname: String
 	
 	player.position = Vector2(position[0], position[1])
 	player.player_id = id  # Now string
+
 	player.is_local_player = is_local
 	if !is_local:
 		player.get_node("Nickname").text = nickname
