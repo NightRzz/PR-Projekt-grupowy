@@ -1,0 +1,14 @@
+
+LICENCE 
+
++ Proper attribution must be given wherever the assets are used.
+
+YOU CAN:
++ Use, edit, and modify the assets for any non-commercial or commercial projects.
++ Include the assets, whether modified or unmodified, as part of your project.
+
+YOU CANNOT:
++ Resell, redistribute, or repackage the assets alone, whether modified or unmodified.
++ Include the assets in any asset pack, template, or resource for redistribution.
+
+

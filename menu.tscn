@@ -25,6 +25,9 @@ offset_right = 706.0
 offset_bottom = 437.0
 scale = Vector2(1.2, 1.2)
 
+[node name="LobbyLabel" type="Label" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
 [node name="UsernameInput" type="LineEdit" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
 placeholder_text = "UsernameInput"

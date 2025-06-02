@@ -44,11 +44,11 @@ alignment = 1
 
 [node name="ReadyButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "ReadyButton"
+text = "Ready"
 
 [node name="StartGameButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "StartGameButton"
+text = "Start Game"
 
 [node name="ChatLog" type="RichTextLabel" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -57,9 +57,13 @@ horizontal_alignment = 1
 
 [node name="ChatInput" type="LineEdit" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
-placeholder_text = "ChatInput"
+placeholder_text = "Enter message"
 clear_button_enabled = true
 
 [node name="SendButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
-text = "SendButton"
+text = "Send mesage"
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Exit lobby"
